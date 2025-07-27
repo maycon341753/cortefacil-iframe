@@ -10,9 +10,94 @@
       height: 100vh;
       border: none;
     }
+    
+    .refresh-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1000;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    
+    .refresh-btn:hover {
+      background: #0056b3;
+    }
+    
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
+  <button class="refresh-btn" onclick="refreshIframe()">🔄 Atualizar</button>
   <iframe src="https://others-mw-cf-app.pvuzyy.easypanel.host" id="embedded-site"></iframe>
+
+  <script>
+    const iframe = document.getElementById('embedded-site');
+    const refreshBtn = document.querySelector('.refresh-btn');
+    
+    // Função para atualizar o iframe
+    function refreshIframe() {
+      iframe.classList.add('loading');
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = '⏳ Atualizando...';
+      
+      // Força o reload do iframe
+      const currentSrc = iframe.src;
+      iframe.src = 'about:blank';
+      
+      setTimeout(() => {
+        iframe.src = currentSrc + '?t=' + new Date().getTime();
+        
+        iframe.onload = () => {
+          iframe.classList.remove('loading');
+          refreshBtn.disabled = false;
+          refreshBtn.textContent = '🔄 Atualizar';
+        };
+      }, 100);
+    }
+    
+    // Auto-refresh quando a página pai ganha foco (usuário volta para a aba)
+    let wasHidden = false;
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && wasHidden) {
+        // Página voltou a ficar visível, verifica se precisa atualizar
+        setTimeout(refreshIframe, 500);
+      }
+      wasHidden = document.hidden;
+    });
+    
+    // Escuta mensagens do iframe (caso o site suporte postMessage)
+    window.addEventListener('message', (event) => {
+      // Verifica se a origem é confiável
+      console.log(event)
+      if (event.origin === 'https://others-mw-cf-app.pvuzyy.easypanel.host') {
+        // Se receber uma mensagem de login/logout, atualiza
+        if (event.data === 'refresh' || event.data === 'login' || event.data === 'logout') {
+          refreshIframe();
+        }
+      }
+    });
+    
+    // Refresh automático a cada 30 segundos (opcional - pode remover se não quiser)
+    // setInterval(refreshIframe, 30000);
+    
+    // Tecla de atalho F5 ou Ctrl+R para atualizar o iframe
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+        e.preventDefault();
+        refreshIframe();
+      }
+    });
+  </script>
 </body>
 </html>
