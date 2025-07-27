@@ -10,42 +10,9 @@
       height: 100vh;
       border: none;
     }
-    #controls {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      background: white;
-      padding: 10px;
-      border: 1px solid #ccc;
-      z-index: 9999;
-    }
   </style>
 </head>
 <body>
-  <div id="controls">
-    <button onclick="mudarRotaDoIframe('/login')">Ir para /login</button>
-    <button onclick="mudarRotaDoIframe('/')">Ir para /</button>
-  </div>
-
   <iframe src="https://others-mw-cf-app.pvuzyy.easypanel.host" id="embedded-site"></iframe>
-
-  <script>
-    // Escuta rotas vindas do iframe (site espelhado)
-    window.addEventListener('message', (event) => {
-      if (event.origin !== "https://others-mw-cf-app.pvuzyy.easypanel.host") return;
-
-      const { route } = event.data;
-      if (route) {
-        console.log("Rota recebida do iframe:", route);
-        history.replaceState(null, '', route); // Atualiza URL do espelhador (opcional)
-      }
-    });
-
-    // Envia rota para o iframe
-    function mudarRotaDoIframe(novaRota) {
-      const iframe = document.getElementById('embedded-site');
-      iframe.contentWindow.postMessage({ route: novaRota }, "https://others-mw-cf-app.pvuzyy.easypanel.host");
-    }
-  </script>
 </body>
 </html>
