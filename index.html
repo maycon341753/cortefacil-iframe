@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Embed Site com Rotas</title>
+  <style>
+    iframe {
+      width: 100%;
+      height: 100vh;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="embedded-site"></iframe>
+
+  <script>
+    const baseUrl = 'https://others-mw-cf-app.pvuzyy.easypanel.host';
+    const currentPath = window.location.pathname + window.location.search + window.location.hash;
+    const iframe = document.getElementById('embedded-site');
+    iframe.src = baseUrl + currentPath;
+  </script>
+</body>
+</html>
